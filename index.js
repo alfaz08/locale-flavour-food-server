@@ -58,7 +58,7 @@ async function run() {
      console.log(filter);
      
       const dataToUpdate = {
-        shop: req.body.name,
+        shop: req.body.shop,
         date: req.body.date,
         address: req.body.address,
         phone: req.body.phone,
@@ -82,7 +82,19 @@ async function run() {
   });
 
 
-
+   //email specific user info
+   app.get('/users/info', async (req, res) => {
+    try {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await userCollection.find(query).toArray();
+      console.log(result);
+      res.send(result);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
 
 
 
