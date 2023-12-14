@@ -47,6 +47,39 @@ async function run() {
 
 
 
+  //update vendor
+    app.patch('/users/email/:email', async (req, res) => {
+    try {
+      const email = req.params.email;
+  
+      
+      const filter = { email: email };
+     console.log(email);
+     console.log(filter);
+     
+      const dataToUpdate = {
+        shop: req.body.name,
+        date: req.body.date,
+        address: req.body.address,
+        phone: req.body.phone,
+        image: req.body.image,
+        roll: req.body.roll,
+        // add other fields here if needed
+      };
+    console.log(dataToUpdate);
+      const updateDoc = {
+        $set: dataToUpdate,
+      };
+  
+      
+      const result = await userCollection.updateOne(filter, updateDoc);
+  
+      res.send(result);
+    } catch (error) {
+      console.error('Error updating badge:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
 
 
 
