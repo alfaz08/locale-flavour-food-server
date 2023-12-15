@@ -29,7 +29,7 @@ async function run() {
 
     //all database collection
    const userCollection = client.db("localeFoodDB").collection("users")
-
+   const productCollection = client.db("localeFoodDB").collection("products")
 
 
    //users related api
@@ -96,7 +96,12 @@ async function run() {
     }
   });
 
-
+  //products related api
+  app.post('/products',async(req,res)=>{
+    const product =req.body
+    const result = await productCollection.insertOne(product)
+    res.send(result)
+  })
 
 
 
