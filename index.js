@@ -104,7 +104,19 @@ async function run() {
   })
 
 
-
+   //email specific vendor product list
+   app.get('/products/vendor',async(req,res)=>{
+    try {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await productCollection.find(query).sort({ createdAt: -1 }).toArray();
+      console.log(result);
+      res.send(result);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+   })
 
 
 
