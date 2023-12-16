@@ -46,6 +46,12 @@ async function run() {
    })
 
 
+   app.get('/users',async(req,res)=>{
+
+    const result =await userCollection.find().toArray()
+    res.send(result)
+  })
+
 
   //update vendor
     app.patch('/users/email/:email', async (req, res) => {
@@ -119,8 +125,19 @@ async function run() {
    })
 
 
-
-
+  // //roll specific customer for admin
+  // app.get('/users/customers',async(req,res)=>{
+  //   try {
+  //     const roll = req.query.roll;
+  //     const query = { roll: roll };
+  //     const result = await usersCollection.find(query).toArray();
+  //     console.log(result);
+  //     res.send(result);
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).send('Internal Server Error');
+  //   }
+  //  })
 
 
 
