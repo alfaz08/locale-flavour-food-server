@@ -61,6 +61,16 @@ app.get('/users/customer',async(req,res)=>{
   res.send(result)
 })
 
+ //delete vendor data
+
+app.delete('/users/vendor/:email',async(req,res)=>{
+  const email = req.params.email
+  const query= {email: email}
+  const result = await userCollection.deleteOne(query)
+  res.send(result)
+})
+
+
 
   //update vendor
     app.patch('/users/email/:email', async (req, res) => {
