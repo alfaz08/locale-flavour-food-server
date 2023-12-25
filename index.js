@@ -53,7 +53,13 @@ async function run() {
     res.send(result)
   })
   
-
+//customer list
+app.get('/users/customer',async(req,res)=>{
+  const roll=req.query.roll
+  const query = {roll: roll}
+  const result =await userCollection.find(query).toArray()
+  res.send(result)
+})
 
 
   //update vendor
