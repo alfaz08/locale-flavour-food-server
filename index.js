@@ -45,12 +45,15 @@ async function run() {
     res.send(result)
    })
 
-
-   app.get('/users',async(req,res)=>{
-
-    const result =await userCollection.find().toArray()
+///vendor list
+   app.get('/users/vendor',async(req,res)=>{
+    const roll=req.query.roll
+    const query = {roll: roll}
+    const result =await userCollection.find(query).toArray()
     res.send(result)
   })
+  
+
 
 
   //update vendor
@@ -125,8 +128,8 @@ async function run() {
    })
 
 
-  // //roll specific customer for admin
-  // app.get('/users/customers',async(req,res)=>{
+  //roll specific customer for admin
+  // app.get('/users/allCustomers',async(req,res)=>{
   //   try {
   //     const roll = req.query.roll;
   //     const query = { roll: roll };
