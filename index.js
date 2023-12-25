@@ -61,6 +61,21 @@ app.get('/users/customer',async(req,res)=>{
   res.send(result)
 })
 
+//admin list
+app.get('/users/admin',async(req,res)=>{
+  const roll=req.query.roll
+  const query = {roll: roll}
+  const result =await userCollection.find(query).toArray()
+  res.send(result)
+})
+//delete admin
+app.delete('/users/admin/:email',async(req,res)=>{
+  const email = req.params.email
+  const query= {email: email}
+  const result = await userCollection.deleteOne(query)
+  res.send(result)
+})
+
  //delete vendor data
 
 app.delete('/users/vendor/:email',async(req,res)=>{
