@@ -114,6 +114,26 @@ app.get('/users/admin/:email',async(req,res)=>{
 })
 
 
+//check vendor
+app.get('/users/vendor/:email',async(req,res)=>{
+  const email =req.params.email
+  // if(email!==req.decoded.email){
+  //   return res.status(403).send({message:'unauthorized access'})
+  // }
+  const query={email:email}
+  const user =await userCollection.findOne(query)
+  let vendor=false
+  if(user){
+    vendor=user?.roll==='vendor'
+  }
+  res.send({vendor})
+})
+
+
+
+
+
+
 
 
 
