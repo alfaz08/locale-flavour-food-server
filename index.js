@@ -1,8 +1,9 @@
 const express = require('express');
 const cors = require('cors')
 const app =express();
-const port = process.env.PORT || 5000
 const jwt = require('jsonwebtoken');
+const port = process.env.PORT || 5000
+
 require('dotenv').config()
 
 //middleware
@@ -156,7 +157,13 @@ app.get('/users/vendor/:email',async(req,res)=>{
   res.send({vendor})
 })
 
-
+//delete products by vendor
+  app.delete('/products/:id',async(req,res)=>{
+    const id = req.params.id
+    const query= {_id: new ObjectId(id)}
+    const result = await productCollection.deleteOne(query)
+    res.send(result)
+  })
 
 
 
