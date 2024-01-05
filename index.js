@@ -1,10 +1,12 @@
 const express = require('express');
 const cors = require('cors')
 const app =express();
+
 const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000
 
 require('dotenv').config()
+const stripe =require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 //middleware
 app.use(cors())
@@ -23,6 +25,9 @@ const client = new MongoClient(uri, {
   }
 });
 
+
+
+
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
@@ -32,7 +37,7 @@ async function run() {
     //all database collection
    const userCollection = client.db("localeFoodDB").collection("users")
    const productCollection = client.db("localeFoodDB").collection("products")
-
+   const vendorPaymentCollection = client.db("localeFoodDB").collection("vendorPayment")
 
 
   //jwt related api
@@ -267,6 +272,42 @@ app.delete('/users/customer/:email',async(req,res)=>{
   //     res.status(500).send('Internal Server Error');
   //   }
   //  })
+
+  //vendor shop payment 
+  app.post('/vendor-payment',async(req,res)=>{
+    const {price} = req.body;
+    const amount = parseFloat(price *100)
+
+    const paymentIntent= await stripe.paymentIntents.create({
+      amount:amount,
+      currency: 'usd',
+      payment_method_types: ['card']
+    })
+    res.send({
+      clientSecret: paymentIntent.client_secret
+    })
+  })
+
+  //vendor payment store in database
+
+  app.post('/vendorPayments',async(req,res)=>{
+    const payment =req.body
+    const result = await vendorPaymentCollection.insertOne(payment)
+    res.send(result)
+  })
+  //after payment membership upgrade of vendor
+  app.patch('/vendor/:email',async(req,res)=>{
+    const email = req.params.email
+    const filter= {email: email}
+  const updatedDoc ={
+  $set:{
+    membership: 'premium'
+  }
+  }
+  const result = await userCollection.updateOne(filter,updatedDoc)
+  res.send(result)
+  })
+
 
 
 
