@@ -38,7 +38,7 @@ async function run() {
    const userCollection = client.db("localeFoodDB").collection("users")
    const productCollection = client.db("localeFoodDB").collection("products")
    const vendorPaymentCollection = client.db("localeFoodDB").collection("vendorPayment")
-
+   const categoryCollection = client.db("localeFoodDB").collection("categoryCollection")
 
   //jwt related api
   app.post('/jwt',async(req,res)=>{
@@ -50,7 +50,7 @@ async function run() {
   //verify token milldlewares
 
   const verifyToken =(req,res,next)=>{
-    console.log('inside verfiy token',req.headers);
+  
     if(!req.headers.authorization){
       return res.status(401).send({message: 'forbidden access'})
     }
@@ -194,8 +194,7 @@ app.delete('/users/customer/:email',async(req,res)=>{
   
       
       const filter = { email: email };
-     console.log(email);
-     console.log(filter);
+     
      
       const dataToUpdate = {
         shop: req.body.shop,
@@ -309,7 +308,21 @@ app.delete('/users/customer/:email',async(req,res)=>{
   })
 
 
+  //add category
+  app.get('/category',verifyToken,async(req,res)=>{
+   
+    const result =await categoryCollection.find().toArray()
+    res.send(result)
+  })
 
+
+  ///Milk product list
+  app.get('/milkProduct',async(req,res)=>{
+    const productCategory=req.query.productCategory
+    const query = {productCategory:productCategory}
+    const result = await productCollection.find(query).toArray()
+    res.send(result)
+  })
 
 
 
