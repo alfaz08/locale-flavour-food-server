@@ -315,6 +315,14 @@ app.delete('/users/customer/:email',async(req,res)=>{
     res.send(result)
   })
 
+ //single product get from database
+ app.get('/singleProduct/:id',verifyToken,async(req,res)=>{
+  const id = req.params.id
+  const query= {_id: new ObjectId(id)}
+  const result =await productCollection.findOne(query)
+  res.send(result)
+})
+
 
   ///Milk product list
   app.get('/milkProduct',async(req,res)=>{
@@ -323,6 +331,15 @@ app.delete('/users/customer/:email',async(req,res)=>{
     const result = await productCollection.find(query).toArray()
     res.send(result)
   })
+
+  ///vegetables product list
+  app.get('/vegetablesProduct',async(req,res)=>{
+    const productCategory=req.query.productCategory
+    const query = {productCategory:productCategory}
+    const result = await productCollection.find(query).toArray()
+    res.send(result)
+  })
+
 
 
 
