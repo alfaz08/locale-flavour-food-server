@@ -361,6 +361,13 @@ app.delete('/users/customer/:email',async(req,res)=>{
     const result = await productCollection.find(query).toArray()
     res.send(result)
   })
+  ///beverages product list
+  app.get('/beveragesProduct',async(req,res)=>{
+    const productCategory=req.query.productCategory
+    const query = {productCategory:productCategory}
+    const result = await productCollection.find(query).toArray()
+    res.send(result)
+  })
 
 
 
