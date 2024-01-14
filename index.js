@@ -347,6 +347,13 @@ app.delete('/users/customer/:email',async(req,res)=>{
     const result = await productCollection.find(query).toArray()
     res.send(result)
   })
+  ///sweet and dessert product list
+  app.get('/sweetProduct',async(req,res)=>{
+    const productCategory=req.query.productCategory
+    const query = {productCategory:productCategory}
+    const result = await productCollection.find(query).toArray()
+    res.send(result)
+  })
 
 
 
