@@ -39,6 +39,7 @@ async function run() {
    const productCollection = client.db("localeFoodDB").collection("products")
    const vendorPaymentCollection = client.db("localeFoodDB").collection("vendorPayment")
    const categoryCollection = client.db("localeFoodDB").collection("categoryCollection")
+   const cartCollection = client.db("localeFoodDB").collection("carts")
 
   //jwt related api
   app.post('/jwt',async(req,res)=>{
@@ -368,6 +369,14 @@ app.delete('/users/customer/:email',async(req,res)=>{
     const result = await productCollection.find(query).toArray()
     res.send(result)
   })
+
+   //add to cart api
+   app.post('/carts',async(req,res)=>{
+    const cartItem = req.body
+    const result = await cartCollection.insertOne(cartItem)
+    res.send(result)
+   })
+
 
 
 
