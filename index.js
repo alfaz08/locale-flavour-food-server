@@ -40,6 +40,7 @@ async function run() {
    const vendorPaymentCollection = client.db("localeFoodDB").collection("vendorPayment")
    const categoryCollection = client.db("localeFoodDB").collection("categoryCollection")
    const cartCollection = client.db("localeFoodDB").collection("carts")
+   const paymentCollection=client.db("localeFoodDB").collection("payments")
 
   //jwt related api
   app.post('/jwt',async(req,res)=>{
@@ -204,6 +205,7 @@ app.delete('/users/customer/:email',async(req,res)=>{
         phone: req.body.phone,
         image: req.body.image,
         roll: req.body.roll,
+        membership:req.body.membership
         // add other fields here if needed
       };
     console.log(dataToUpdate);
@@ -402,7 +404,33 @@ app.delete('/users/customer/:email',async(req,res)=>{
   })
   
 
+   //customer cart payment 
+  app.post('/customer-payment',async(req,res)=>{
+    const {price} = req.body;
+    const amount = parseFloat(price *100)
 
+    const paymentIntent= await stripe.paymentIntents.create({
+      amount:amount,
+      currency: 'usd',
+      payment_method_types: ['card']
+    })
+    res.send({
+      clientSecret: paymentIntent.client_secret
+    })
+  })
+
+  //vendor payment store in database and also remove cart data
+
+  app.post('/customerPayments',async(req,res)=>{
+    const payment =req.body
+    const paymentResult = await paymentCollection.insertOne(payment)
+    //delete item from database
+    const query ={_id:{
+      $in: payment.cartIds?.map(id=>new ObjectId(id))
+    }}
+    const deleteResult = await cartCollection.deleteMany(query)
+    res.send({paymentResult,deleteResult})
+  })
 
 
     // Send a ping to confirm a successful connection
