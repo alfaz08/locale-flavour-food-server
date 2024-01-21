@@ -419,7 +419,7 @@ app.delete('/users/customer/:email',async(req,res)=>{
     })
   })
 
-  //vendor payment store in database and also remove cart data
+  //customer payment store in database and also remove cart data
 
   app.post('/customerPayments',async(req,res)=>{
     const payment =req.body
@@ -430,6 +430,19 @@ app.delete('/users/customer/:email',async(req,res)=>{
     }}
     const deleteResult = await cartCollection.deleteMany(query)
     res.send({paymentResult,deleteResult})
+  })
+
+
+  //get customer payment history from db
+
+  app.get('/customerPayments/:email',async(req,res)=>{
+    const query = {email: req.params.email}
+
+    console.log(query);
+    // const email = req.query.email;
+    // const query = { email: email };
+    const result = await paymentCollection.find(query).toArray()
+    res.send(result)
   })
 
 
