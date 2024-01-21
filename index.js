@@ -317,7 +317,7 @@ app.delete('/users/customer/:email',async(req,res)=>{
   })
 
  //single product get from database
- app.get('/singleProduct/:id',verifyToken,async(req,res)=>{
+ app.get('/singleProduct/:id',async(req,res)=>{
   const id = req.params.id
   const query= {_id: new ObjectId(id)}
   const result =await productCollection.findOne(query)
@@ -376,10 +376,31 @@ app.delete('/users/customer/:email',async(req,res)=>{
     const result = await cartCollection.insertOne(cartItem)
     res.send(result)
    })
+  
+   //get all cart  data
+   app.get('/carts', async (req, res) => {
+    try {
+      const email = req.query.email;
+      const query = { email: email };
+      
+      // Assuming cartCollection is a MongoDB collection
+      const result = await cartCollection.find(query).sort({ createdAt: -1 }).toArray();
+  
+      res.send(result);
+    } catch (error) {
+      console.error("Error fetching and sorting carts:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
 
-
-
-
+  //delete from cart
+  app.delete('/carts/:id',async(req,res)=>{
+    const id= req.params.id
+    const query= {_id: new ObjectId(id)}
+    const result = await cartCollection.deleteOne(query)
+    res.send(result)
+  })
+  
 
 
 
