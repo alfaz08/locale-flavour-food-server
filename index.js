@@ -41,6 +41,7 @@ async function run() {
    const categoryCollection = client.db("localeFoodDB").collection("categoryCollection")
    const cartCollection = client.db("localeFoodDB").collection("carts")
    const paymentCollection=client.db("localeFoodDB").collection("payments")
+   const orderCollection=client.db("localeFoodDB").collection("orders")
 
   //jwt related api
   app.post('/jwt',async(req,res)=>{
@@ -172,7 +173,19 @@ app.get('/users/vendor/:email',async(req,res)=>{
     res.send(result)
   })
 
+ //update product popularity
+   app.patch('/products/:id',async(req,res)=>{
+    const id= req.params.id
+    const query= {_id: new ObjectId(id)}
+    const updatedDoc ={
+      $inc:{
+        popularity: +1
+      }
+      }
+      const result = await productCollection.updateOne(query,updatedDoc)
+      res.send(result)
 
+   })
 
 
 
@@ -225,7 +238,7 @@ app.delete('/users/customer/:email',async(req,res)=>{
 
 
    //email specific user info
-   app.get('/users/info', async (req, res) => {
+   app.get('/users/info',verifyToken, async (req, res) => {
     try {
       const email = req.query.email;
       const query = { email: email };
@@ -437,13 +450,22 @@ app.delete('/users/customer/:email',async(req,res)=>{
 
   app.get('/customerPayments/:email',async(req,res)=>{
     const query = {email: req.params.email}
-
     console.log(query);
-    // const email = req.query.email;
-    // const query = { email: email };
     const result = await paymentCollection.find(query).toArray()
     res.send(result)
   })
+
+   //cart details store in order collection
+   app.post('/orders',async(req,res)=>{
+    const orderItem = req.body
+    const result = await orderCollection.insertOne(orderItem)
+    res.send(result)
+   })
+   app.get('/orders',async(req,res)=>{
+    const result = await orderCollection.find().toArray()
+    res.send(result)
+   })
+
 
 
     // Send a ping to confirm a successful connection
