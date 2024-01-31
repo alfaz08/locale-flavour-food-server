@@ -260,7 +260,7 @@ app.delete('/users/customer/:email',async(req,res)=>{
 
 
    //email specific vendor product list
-   app.get('/products/vendor',async(req,res)=>{
+   app.get('/products/vendor',verifyToken,async(req,res)=>{
     try {
       const email = req.query.email;
       const query = { email: email };
@@ -330,6 +330,9 @@ app.delete('/users/customer/:email',async(req,res)=>{
     const result =await categoryCollection.find().toArray()
     res.send(result)
   })
+
+
+
 
  //single product get from database
  app.get('/singleProduct/:id',async(req,res)=>{
@@ -465,6 +468,15 @@ app.delete('/users/customer/:email',async(req,res)=>{
     const result = await orderCollection.find().toArray()
     res.send(result)
    })
+
+
+   //get all products
+   app.get('/allProducts',async(req,res)=>{
+   
+    const result =await productCollection.find().toArray()
+    res.send(result)
+  })
+
 
 
 
