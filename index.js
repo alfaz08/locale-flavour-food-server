@@ -502,6 +502,27 @@ app.delete('/users/customer/:email',async(req,res)=>{
     res.send(result)
   })
 
+  //get comment/review api for specific product
+  app.get('/comments/:id',verifyToken, async (req, res) => {
+    try {
+      const productId = req.params.id; 
+     console.log('productId',productId);
+      const query = { productId: productId };
+      const result = await commentCollection.find(query).toArray();
+      console.log(result);
+      res.send(result);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+
+
+
+
+
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
