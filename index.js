@@ -42,6 +42,7 @@ async function run() {
    const cartCollection = client.db("localeFoodDB").collection("carts")
    const paymentCollection=client.db("localeFoodDB").collection("payments")
    const orderCollection=client.db("localeFoodDB").collection("orders")
+   const commentCollection=client.db("localeFoodDB").collection("comments")
 
   //jwt related api
   app.post('/jwt',async(req,res)=>{
@@ -453,8 +454,8 @@ app.delete('/users/customer/:email',async(req,res)=>{
 
   app.get('/customerPayments/:email',async(req,res)=>{
     const query = {email: req.params.email}
-    console.log(query);
-    const result = await paymentCollection.find(query).toArray()
+    const result = await paymentCollection.find(query).sort({ createdAt: -1 }).toArray();
+    console.log(result);
     res.send(result)
   })
 
@@ -478,7 +479,28 @@ app.delete('/users/customer/:email',async(req,res)=>{
   })
 
 
+  //shop details using id
+  app.get('/singleShop/:id',async(req,res)=>{
+    const id = req.params.id
+    const query= {_id: new ObjectId(id)}
+    const result =await userCollection.findOne(query)
+    res.send(result)
+  })
 
+  //invoice api by id
+  app.get('/invoice/:id',async(req,res)=>{
+    const id = req.params.id
+    const query= {_id: new ObjectId(id)}
+    const result =await paymentCollection.findOne(query)
+    res.send(result)
+  })
+
+  //comment/review related api
+  app.post('/comments',async(req,res)=>{
+     const commentReview = req.body
+    const result = await commentCollection.insertOne(commentReview)
+    res.send(result)
+  })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
