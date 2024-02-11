@@ -222,7 +222,7 @@ app.delete('/users/customer/:email',async(req,res)=>{
         membership:req.body.membership
         // add other fields here if needed
       };
-    console.log(dataToUpdate);
+    
       const updateDoc = {
         $set: dataToUpdate,
       };
@@ -244,7 +244,7 @@ app.delete('/users/customer/:email',async(req,res)=>{
       const email = req.query.email;
       const query = { email: email };
       const result = await userCollection.find(query).toArray();
-      console.log(result);
+     
       res.send(result);
     } catch (error) {
       console.error(error);
@@ -266,7 +266,7 @@ app.delete('/users/customer/:email',async(req,res)=>{
       const email = req.query.email;
       const query = { email: email };
       const result = await productCollection.find(query).sort({ createdAt: -1 }).toArray();
-      console.log(result);
+     
       res.send(result);
     } catch (error) {
       console.error(error);
@@ -455,7 +455,7 @@ app.delete('/users/customer/:email',async(req,res)=>{
   app.get('/customerPayments/:email',async(req,res)=>{
     const query = {email: req.params.email}
     const result = await paymentCollection.find(query).sort({ createdAt: -1 }).toArray();
-    console.log(result);
+    
     res.send(result)
   })
 
@@ -506,7 +506,22 @@ app.delete('/users/customer/:email',async(req,res)=>{
   app.get('/comments/:id',verifyToken, async (req, res) => {
     try {
       const productId = req.params.id; 
-     console.log('productId',productId);
+     
+      const query = { productId: productId };
+      const result = await commentCollection.find(query).toArray();
+     
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+
+  //get product id
+  //comment/review related api
+  app.get('/comments/singleReview/:id',verifyToken, async (req, res) => {
+    try {
+      const productId = req.params.id; 
+    console.log('products',productId);
       const query = { productId: productId };
       const result = await commentCollection.find(query).toArray();
       console.log(result);
@@ -516,8 +531,6 @@ app.delete('/users/customer/:email',async(req,res)=>{
       res.status(500).send('Internal Server Error');
     }
   });
-
-
 
 
 
