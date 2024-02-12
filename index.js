@@ -506,15 +506,16 @@ app.delete('/users/customer/:email',async(req,res)=>{
   app.get('/comments/:id',verifyToken, async (req, res) => {
     try {
       const productId = req.params.id; 
-     
+    
       const query = { productId: productId };
       const result = await commentCollection.find(query).toArray();
-     
+      res.send(result)
     } catch (error) {
       console.error(error);
       res.status(500).send('Internal Server Error');
     }
   });
+
 
   //get product id
   //comment/review related api
@@ -533,8 +534,73 @@ app.delete('/users/customer/:email',async(req,res)=>{
   });
 
 
+  //admin stats api related api
+  app.get('/admin-stats',verifyToken,async (req, res) => {
+    try {
+      const totalVendors = await userCollection.countDocuments({ roll: 'vendor' });
+      const totalCustomers = await userCollection.countDocuments({ roll: 'customer' });
+      const totalProducts = await productCollection.estimatedDocumentCount()
+      const totalOrders = await orderCollection.estimatedDocumentCount()
+      // const customerPayments = await paymentCollection.find().toArray()
+      // const vendorPayments = await vendorPaymentCollection.find().toArray()
+     const totalComments = await commentCollection.estimatedDocumentCount()
+  
+
+     const customerPayments = await paymentCollection.aggregate([
+      {
+        $group:{
+          _id:null,
+          totalRevenue:{
+            $sum:'$price'
+          }
+        }
+      }
+     ]).toArray();
+
+     const totalCustomerPayments = customerPayments.length > 0 ? customerPayments[0].totalRevenue : 0
+     const vendorPayments = await vendorPaymentCollection.aggregate([
+      {
+        $group:{
+          _id:null,
+          totalRevenue:{
+            $sum:'$price'
+          }
+        }
+      }
+     ]).toArray();
+
+     const totalVendorPayments = vendorPayments.length > 0 ? vendorPayments[0].totalRevenue : 0
+     
 
 
+
+  // const totalCustomerPayments = customerPayments.reduce((total, totalPrice) => total + totalPrice.price, 0);
+  // const totalVendorPayments = vendorPayments.reduce((total, totalPrice) => total + totalPrice.price, 0);
+  
+  
+      res.send({
+        totalCustomers,
+        totalVendors,
+        totalProducts,
+        totalOrders,
+        totalCustomerPayments,
+        totalComments,
+       totalVendorPayments
+
+      });
+
+
+
+
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+
+
+  
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
